@@ -1,8 +1,46 @@
 # termux-docker
 This repo is a combination of [this](https://github.com/egandro/docker-qemu-arm) and [this](https://github.com/mrp-yt/docker_and_portainer_on_dex), except it works and it is actively maintained.
 
-'''sh
-And there is one more change that I've yet to add to the. Repository, and that was...
+
+``` sh
+  these are a couple functions. I cultivated for the adaptation of this project.
+And adding qemu_uefi_setup
+
+Allows you to set up -virtfs
+The ability to mount a folder from your host directory to your virtual machine.
+
+export IMAGE=alpine.img
+export SHARE_PATH=/data/data/com.termux/files/home/shared
+
+# Create shared directory if missing
+mkdir -p "$SHARE_PATH"
+
+qemu-system-x86_64 \
+  -machine q35 \
+  -m 12288 \
+  -smp cpus=8 \
+  -drive if=pflash,format=raw,read-only=on,file="$PREFIX/s>
+  -netdev user,id=n1,net=192.168.50.0/24,\
+hostfwd=tcp::2222-:22,\
+hostfwd=tcp::9000-:9000,\
+hostfwd=tcp::8080-:8080,\
+hostfwd=tcp::8111-:8111,\
+hostfwd=tcp::8133-:8133,\
+hostfwd=tcp::8144-:8144,\
+hostfwd=tcp::8123-:8123,\
+hostfwd=tcp::11444-:11444,\
+hostfwd=tcp::5000-:5000,\
+hostfwd=tcp::6901-:6901,\
+hostfwd=tcp::6902-:6902,\
+hostfwd=tcp::6903-:6903,\
+hostfwd=tcp::8090-:8090,\
+hostfwd=tcp::5001-:5001,\
+hostfwd=tcp::47777-:47777,\
+hostfwd=tcp::8000-:8000 \
+  -device virtio-net,netdev=n1 \
+  -virtfs local,path="$SHARE_PATH",security_model=none,mou>
+  -nographic \
+  "$IMAGE" &
 
 
 
@@ -80,7 +118,9 @@ fi
 
 
 These were a couple of functions that I built for my .bashrc and it is compatible with .zshrc
-'''
+  ```
+
+
 ## How to use: Docker
 
   Create the virtual machine with:
