@@ -1,7 +1,86 @@
 # termux-docker
 This repo is a combination of [this](https://github.com/egandro/docker-qemu-arm) and [this](https://github.com/mrp-yt/docker_and_portainer_on_dex), except it works and it is actively maintained.
 
+'''sh
+And there is one more change that I've yet to add to the. Repository, and that was...
 
+
+
+
+# Memory Calculator: Convert gigabytes to megabytes
+mc() {
+  if [[ -z "$1" || ! "$1" =~ ^[0-9]+$ ]]; then
+    echo "Usage: mc <whole_number_of_gigabytes>"
+    return 1
+  fi
+  echo "$1 GB = $(( $1 * 1024 )) MB"
+}
+export PATH=$PREFIX/opt/warp-terminal/bin:$PATH
+export PATH=$PREFIX/opt/warpdotdev/warp-terminal:$PATH
+
+
+# Auto-prepare QEMU UEFI environment for Alpine
+function qemu_uefi_setup() {
+    local qemu_dir="$PREFIX/share/qemu"
+    local ovmf_file="$qemu_dir/OVMF.fd"
+    local url="https://retrage.github.io/edk2-nightly/bin/RELEASEX64_OVMF.fd"
+
+    mkdir -p "$qemu_dir"
+
+    # Check if valid OVMF file exists
+    if [ ! -f "$ovmf_file" ] || [ $(stat -c%s "$ovmf_file") -lt 2000000 ]; then
+        echo "[*] Fetching OVMF firmware..."
+        curl -L -o "$ovmf_file" "$url" || {
+            echo "[!] Failed to fetch OVMF.fd, defaulting to BIOS mode."
+            return 1
+        }
+        echo "[+] OVMF firmware downloaded successfully."
+    else
+        echo "[+] Existing valid OVMF firmware detected."
+    fi
+
+    # Optionally verify /shared mount
+    if [ ! -d /shared ]; then
+        echo "[!] /shared not mounted, attempting to create."
+        mkdir -p /shared
+    fi
+
+    echo "[✓] QEMU UEFI environment ready."
+}
+
+
+# Function: addport
+# Purpose: Quickly open the QEMU start script for manual port edits
+addport() {
+    local script="$HOME/alpine/startqemu.sh"
+
+    if [ ! -f "$script" ]; then
+        echo "Error: $script not found."
+        return 1
+    fi
+
+    echo "Opening $script for editing..."
+    nano "$script"
+}
+
+# --- Alpine Auto ---
+alpine() {
+    cd ~/alpine || return 1
+    termux-wake-lock 2>/dev/null
+    ./startqemu.sh
+    sleep 60
+    ./ssh2qemu.sh
+}
+# Auto-run if QEMU isn't active
+if ! pgrep -f "qemu" >/dev/null 2>&1; then
+    alpine &
+fi
+# --- End Alpine Auto ---
+
+
+
+These were a couple of functions that I built for my .bashrc and it is compatible with .zshrc
+'''
 ## How to use: Docker
 
   Create the virtual machine with:
