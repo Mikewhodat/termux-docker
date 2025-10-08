@@ -126,7 +126,7 @@ These were a couple of functions that I built for my .bashrc and it is compatibl
   Create the virtual machine with:
   https://github.com/Mikewhodat/termux-docker.git
   ``` sh
- cd termux-docker/main/setup.sh && chmod 755 ./setup.sh && ./setup.sh
+ curl -o setup.sh https://raw.githubusercontent.com/Mikewhodat/termux-docker/main/setup.sh && chmod 755 ./setup.sh && ./setup.sh
   ```
 
   And start it with:
